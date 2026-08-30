@@ -34,7 +34,7 @@ Then open http://localhost:4173. (Live data requires network; the API is CORS-op
 - The illustrated style is ~12 hand-authored MapLibre layers against OpenMapTiles vector tiles — no style server, no API key; satellite mode swaps the full style object while DOM markers persist
 - The map deliberately avoids the `load` event as a readiness gate (raster tile streams can defer it indefinitely) and instead treats data, markers, and camera as independent of style readiness; a viewport-stability check makes the intro fly-in robust inside embedded webviews
 - Land labels and the "nearest land" attribution on detail cards are hand-placed anchors — the public API doesn't expose land grouping
-- `data/resort.geojson` (~2.6 MB) is full-detail resort geometry — 77 attraction footprints, 5,700 buildings with heights, plazas, ride tracks, the monorail and Disneyland Railroad — fetched once from OpenStreetMap via Overpass and bundled; rendered as pseudo-3D `fill-extrusion` volumes so attractions are *visible*, not just pinned (ODbL, credited)
+- `data/resort.geojson` (~2.6 MB) is full-detail resort geometry — 77 attraction footprints, 5,700 buildings with heights, plazas, ride tracks, the monorail and Disneyland Railroad — fetched once from OpenStreetMap via Overpass and bundled; rendered as pseudo-3D `fill-extrusion` volumes so attractions are *visible*, not just pinned (ODbL, credited); 113 structures carry real-world colors — a hand-curated palette for the marquee rides (rust Big Thunder, pink castle, white Space Mountain) plus OSM `building:colour` tags where mappers recorded them
 
 ## Data & IP
 

@@ -102,6 +102,8 @@ const ILLUSTRATED_STYLE = {
     /* --- bundled full-detail resort geometry, drawn over the tile base --- */
     { id: "rs-plaza", type: "fill", source: "resort", filter: ["==", ["get", "k"], "plaza"],
       paint: { "fill-color": "#f6efdd" } },
+    { id: "rs-zone", type: "fill", source: "resort", filter: ["==", ["get", "k"], "zone"],
+      paint: { "fill-color": ["coalesce", ["get", "c"], "#f3ecd9"], "fill-opacity": 0.6 } },
     { id: "rs-water", type: "fill", source: "resort", filter: ["==", ["get", "k"], "water"],
       paint: { "fill-color": "#8fcff0" } },
     { id: "rs-path", type: "line", source: "resort", filter: ["==", ["get", "k"], "path"],
@@ -116,10 +118,10 @@ const ILLUSTRATED_STYLE = {
     { id: "rs-monorail", type: "line", source: "resort", filter: ["==", ["get", "k"], "monorail"],
       layout: { "line-cap": "round" }, paint: { "line-color": "#e0a84f", "line-width": 2.2 } },
     { id: "rs-building-3d", type: "fill-extrusion", source: "resort", filter: ["==", ["get", "k"], "building"],
-      paint: { "fill-extrusion-color": "#fcf8ee", "fill-extrusion-height": ["get", "h"],
+      paint: { "fill-extrusion-color": ["coalesce", ["get", "c"], "#fcf8ee"], "fill-extrusion-height": ["get", "h"],
                "fill-extrusion-opacity": 0.94 } },
     { id: "rs-attraction-3d", type: "fill-extrusion", source: "resort", filter: ["==", ["get", "k"], "attraction"],
-      paint: { "fill-extrusion-color": "#e9eff9", "fill-extrusion-height": ["get", "h"],
+      paint: { "fill-extrusion-color": ["coalesce", ["get", "c"], "#e9eff9"], "fill-extrusion-height": ["get", "h"],
                "fill-extrusion-opacity": 0.97 } },
   ],
   // OpenFreeMap asks for attribution to OpenStreetMap contributors
