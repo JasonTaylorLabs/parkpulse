@@ -64,7 +64,7 @@ const fmtPT = (d) => new Date(d).toLocaleTimeString("en-US", { hour: "numeric", 
 const OMT = { openmaptiles: { type: "vector", url: "https://tiles.openfreemap.org/planet", attribution: "© OpenStreetMap contributors · OpenFreeMap" } };
 // Full-detail resort geometry (attraction footprints, plazas, monorail, rides)
 // pulled once from OSM via Overpass and bundled — see data/README note.
-const RESORT_SRC = { resort: { type: "geojson", data: "data/resort.geojson" } };
+const RESORT_SRC = { resort: { type: "geojson", data: "data/resort.geojson?v=4" } };
 const ILLUSTRATED_STYLE = {
   version: 8,
   sources: { ...OMT, ...RESORT_SRC },
