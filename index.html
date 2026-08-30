@@ -6,6 +6,9 @@
 <title>ParkPulse — Disneyland Live Map</title>
 <meta name="description" content="Unofficial live wait-time map for Disneyland Resort. Real attractions, real-time data.">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,500;6..12,600;6..12,700;6..12,800&display=swap">
 <link rel="stylesheet" href="styles.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='%234292FF'/><circle cx='50' cy='50' r='16' fill='white'/></svg>">
 </head>
@@ -44,6 +47,9 @@
   <span class="live-dot"></span><span id="liveLabel">LIVE</span>
 </div>
 
+<!-- Map style toggle -->
+<button class="style-toggle" id="styleToggle" aria-label="Toggle satellite view" title="Toggle satellite view">🛰</button>
+
 <!-- List toggle -->
 <button class="fab" id="listToggle" aria-label="Wait time list">
   <svg viewBox="0 0 24 24" class="icon"><line x1="4" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="18" x2="14" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -68,7 +74,7 @@
 <div class="banner" id="banner" hidden></div>
 
 <footer class="credits">
-  Unofficial demo · Not affiliated with The Walt Disney Company · Live data <a href="https://themeparks.wiki" target="_blank" rel="noopener">themeparks.wiki</a> · Imagery Esri, Maxar, Earthstar Geographics
+  Unofficial demo · Not affiliated with The Walt Disney Company · Live data <a href="https://themeparks.wiki" target="_blank" rel="noopener">themeparks.wiki</a> · Map © OpenStreetMap contributors, OpenFreeMap · Satellite © Esri
 </footer>
 
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>

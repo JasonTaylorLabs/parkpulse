@@ -57,32 +57,85 @@ const state = {
 const $ = (s) => document.querySelector(s);
 const fmtPT = (d) => new Date(d).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/Los_Angeles" });
 
-/* ---------------- map ---------------- */
+/* ---------------- map styles ----------------
+   Default is an illustrated, in-park-app-style vector look built on
+   OpenFreeMap's OpenMapTiles: soft greens, cream walkways, white
+   buildings, friendly water. Satellite stays available as a toggle. */
+const OMT = { openmaptiles: { type: "vector", url: "https://tiles.openfreemap.org/planet", attribution: "© OpenStreetMap contributors · OpenFreeMap" } };
+const ILLUSTRATED_STYLE = {
+  version: 8,
+  sources: OMT,
+  layers: [
+    { id: "bg", type: "background", paint: { "background-color": "#e7f0d9" } },
+    { id: "landuse", type: "fill", source: "openmaptiles", "source-layer": "landuse",
+      paint: { "fill-color": "#ece9d8", "fill-opacity": 0.7 } },
+    { id: "grass", type: "fill", source: "openmaptiles", "source-layer": "landcover",
+      filter: ["in", "class", "grass", "farmland"], paint: { "fill-color": "#c9e2a6" } },
+    { id: "wood", type: "fill", source: "openmaptiles", "source-layer": "landcover",
+      filter: ["in", "class", "wood", "tree", "forest"], paint: { "fill-color": "#aed593" } },
+    { id: "park", type: "fill", source: "openmaptiles", "source-layer": "park",
+      paint: { "fill-color": "#c3dfa0", "fill-opacity": 0.85 } },
+    { id: "water", type: "fill", source: "openmaptiles", "source-layer": "water",
+      paint: { "fill-color": "#8fcff0" } },
+    { id: "waterway", type: "line", source: "openmaptiles", "source-layer": "waterway",
+      paint: { "line-color": "#8fcff0", "line-width": 2 } },
+    { id: "road-casing", type: "line", source: "openmaptiles", "source-layer": "transportation",
+      filter: ["!in", "class", "path", "rail", "transit"],
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": "#e2d9c4", "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 14, 3, 18, 16] } },
+    { id: "road", type: "line", source: "openmaptiles", "source-layer": "transportation",
+      filter: ["!in", "class", "path", "rail", "transit"],
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": "#fdfbf4", "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 14, 2, 18, 12] } },
+    { id: "path", type: "line", source: "openmaptiles", "source-layer": "transportation",
+      filter: ["==", "class", "path"],
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": "#f8f1de", "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 14, 1.2, 18, 8] } },
+    { id: "rail", type: "line", source: "openmaptiles", "source-layer": "transportation",
+      filter: ["==", "class", "rail"],
+      paint: { "line-color": "#d9cfba", "line-width": 1.5, "line-dasharray": [3, 2] } },
+    { id: "building", type: "fill", source: "openmaptiles", "source-layer": "building",
+      paint: { "fill-color": "#fcf9f1", "fill-outline-color": "#ddd2ba", "fill-opacity": 0.96 } },
+  ],
+  // OpenFreeMap asks for attribution to OpenStreetMap contributors
+};
+const SATELLITE_STYLE = {
+  version: 8,
+  sources: {
+    esri: {
+      type: "raster",
+      tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+      tileSize: 256,
+      maxzoom: 19,
+      attribution: "Esri, Maxar, Earthstar Geographics",
+    },
+  },
+  layers: [{ id: "sat", type: "raster", source: "esri" }],
+};
+
+// The map exists to view the two parks — clamp the camera to the resort.
+const RESORT_BOUNDS = [[-117.9340, 33.7975], [-117.9040, 33.8235]];
+
 const map = new maplibregl.Map({
   container: "map",
-  center: PARKS.dl.center,
-  zoom: 13.8,
+  center: [-117.91896, 33.80950], // esplanade between the two parks
+  zoom: 15.5,
   pitch: 0,
   bearing: 0,
+  minZoom: 15.05,
   maxZoom: 19.4,
+  maxBounds: RESORT_BOUNDS,
   attributionControl: { compact: true },
-  style: {
-    version: 8,
-    sources: {
-      esri: {
-        type: "raster",
-        tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
-        tileSize: 256,
-        maxzoom: 19,
-        attribution: "Esri, Maxar, Earthstar Geographics",
-      },
-    },
-    layers: [
-      { id: "sat", type: "raster", source: "esri" },
-      // subtle cool grade so chrome + imagery feel like one product
-      { id: "grade", type: "background", paint: { "background-color": "#12204a", "background-opacity": 0.10 } },
-    ],
-  },
+  style: ILLUSTRATED_STYLE,
+});
+
+// Illustrated <-> satellite toggle (markers are DOM, so they survive setStyle)
+let mapMode = "illustrated";
+document.getElementById("styleToggle")?.addEventListener("click", () => {
+  mapMode = mapMode === "illustrated" ? "satellite" : "illustrated";
+  map.setStyle(mapMode === "illustrated" ? ILLUSTRATED_STYLE : SATELLITE_STYLE);
+  document.body.classList.toggle("sat-mode", mapMode === "satellite");
+  document.getElementById("styleToggle").textContent = mapMode === "illustrated" ? "🛰" : "🗺";
 });
 map.addControl(new maplibregl.NavigationControl({ showCompass: true }), "bottom-left");
 
@@ -119,7 +172,7 @@ async function loadPark(parkKey, { fly } = { fly: true }) {
     renderList();
     if (fly) {
       map.resize();
-      const target = { center: park.center, zoom: park.zoom, pitch: 46, bearing: -12 };
+      const target = { center: park.center, zoom: park.zoom, pitch: 34, bearing: -8 };
       cameraLock = { target, until: Date.now() + 15000 };
       map.flyTo({ ...target, duration: 2600, essential: true });
     }
@@ -210,7 +263,7 @@ function buildMarkers(park) {
   for (const [id, e] of state.entities) {
     const el = document.createElement("div");
     el.className = "pin";
-    el.innerHTML = `<div class="pin-badge"></div><div class="pin-label"></div>`;
+    el.innerHTML = `<div class="pin-badge"></div><div class="pin-tip"></div><div class="pin-label"></div>`;
     el.querySelector(".pin-label").textContent = e.name;
     el.addEventListener("click", (ev) => { ev.stopPropagation(); selectEntity(id, { fly: true }); });
     updateBadge(id, el);
@@ -226,7 +279,7 @@ function updateBadge(id, el) {
   const e = state.entities.get(id);
   const w = waitInfo(id);
   const badge = el.querySelector(".pin-badge");
-  badge.style.setProperty("--pc", w.color);
+  badge.style.setProperty("--wc", w.color);
   badge.className = "pin-badge";
   if (e.entityType === "SHOW") {
     badge.classList.add("show-pin", "icon-only");
@@ -235,7 +288,7 @@ function updateBadge(id, el) {
     badge.classList.add("dine-pin", "icon-only");
     badge.textContent = "🍴";
   } else if (w.kind === "wait") {
-    badge.textContent = w.label;
+    badge.innerHTML = `${w.label}<span class="min">MIN</span>`;
   } else if (w.kind === "refurb") {
     badge.classList.add("refurb");
     badge.textContent = "🔧";
@@ -292,6 +345,7 @@ function renderSheet(id) {
   const land = nearestLand(e);
   const typeLabel = { ATTRACTION: "Attraction", SHOW: "Entertainment", RESTAURANT: "Dining" }[e.entityType];
   const statusText = { OPERATING: "Open", DOWN: "Temporarily down", REFURBISHMENT: "Refurbishment", CLOSED: "Closed" }[l?.status] ?? "Unknown";
+  const statusColor = { OPERATING: "var(--ok)", DOWN: "var(--warm)", REFURBISHMENT: "var(--refurb)", CLOSED: "var(--closed)" }[l?.status] ?? "var(--closed)";
   const showtimes = (l?.showtimes ?? [])
     .slice(0, 4)
     .map((s) => fmtPT(s.startTime))
@@ -299,7 +353,7 @@ function renderSheet(id) {
   const ll = l?.queue?.PAID_RETURN_TIME;
   const stats = [];
   if (w.kind === "wait") stats.push(stat("Standby wait", `${w.wait}<small> min</small>`));
-  stats.push(stat("Status", `<span class="status-chip" style="background:${w.color};color:#10141f">${statusText.toUpperCase()}</span>`));
+  stats.push(stat("Status", `<span class="status-chip" style="background:${statusColor}">${statusText.toUpperCase()}</span>`));
   if (ll?.price) stats.push(stat("Lightning Lane", `${ll.price.formatted}<small> · ${ll.returnStart ? fmtPT(ll.returnStart) : "—"}</small>`));
   if (showtimes) stats.push(stat("Next showtimes", `<small style="font-size:13px;font-weight:700">${showtimes}</small>`));
   stats.push(stat("Updated", `<small style="font-size:13px;font-weight:700">${state.lastUpdated ? fmtPT(state.lastUpdated) : "—"}</small>`));
