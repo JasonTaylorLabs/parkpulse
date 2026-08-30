@@ -9,7 +9,7 @@ What this proves: I can ship a polished, data-dense live product experience — 
 ## Features
 
 - **Live wait times** for every attraction in Disneyland Park and Disney California Adventure, refreshed every 60 seconds, color-coded (green ≤ 20 min, amber 25–45, red 50+), with temporary-closure and refurbishment states
-- **Illustrated park-app cartography**: a custom-styled vector basemap (OpenFreeMap/OpenMapTiles over MapLibre GL) — soft greens, cream walkways, white buildings, friendly water — in the visual language of in-park map apps, with hand-placed land labels (Fantasyland, Galaxy's Edge, Cars Land…), zoom-aware attraction labels, and a one-tap **satellite mode** (Esri World Imagery)
+- **Illustrated park-app cartography**: a custom-styled vector basemap (OpenFreeMap/OpenMapTiles over MapLibre GL) — soft greens, cream walkways, white buildings, friendly water — in the visual language of in-park map apps, with pseudo-3D attraction buildings and footprints (the castle, Space Mountain, the monorail loop), hand-placed land labels, zoom-aware attraction labels, and a one-tap **satellite mode** (Esri World Imagery)
 - **Resort-locked camera**: map bounds and zoom are clamped to the two parks — the map is the resort, not greater Anaheim
 - **120 real places** per park — attractions, entertainment, and dining — from the open themeparks.wiki API, each with exact coordinates
 - **Detail cards**: standby wait, operating status, Lightning Lane price & return window when offered, next showtimes, last-updated stamp — all in park time (PT)
@@ -34,6 +34,7 @@ Then open http://localhost:4173. (Live data requires network; the API is CORS-op
 - The illustrated style is ~12 hand-authored MapLibre layers against OpenMapTiles vector tiles — no style server, no API key; satellite mode swaps the full style object while DOM markers persist
 - The map deliberately avoids the `load` event as a readiness gate (raster tile streams can defer it indefinitely) and instead treats data, markers, and camera as independent of style readiness; a viewport-stability check makes the intro fly-in robust inside embedded webviews
 - Land labels and the "nearest land" attribution on detail cards are hand-placed anchors — the public API doesn't expose land grouping
+- `data/resort.geojson` (~2.6 MB) is full-detail resort geometry — 77 attraction footprints, 5,700 buildings with heights, plazas, ride tracks, the monorail and Disneyland Railroad — fetched once from OpenStreetMap via Overpass and bundled; rendered as pseudo-3D `fill-extrusion` volumes so attractions are *visible*, not just pinned (ODbL, credited)
 
 ## Data & IP
 

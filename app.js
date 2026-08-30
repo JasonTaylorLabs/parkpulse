@@ -62,9 +62,12 @@ const fmtPT = (d) => new Date(d).toLocaleTimeString("en-US", { hour: "numeric", 
    OpenFreeMap's OpenMapTiles: soft greens, cream walkways, white
    buildings, friendly water. Satellite stays available as a toggle. */
 const OMT = { openmaptiles: { type: "vector", url: "https://tiles.openfreemap.org/planet", attribution: "© OpenStreetMap contributors · OpenFreeMap" } };
+// Full-detail resort geometry (attraction footprints, plazas, monorail, rides)
+// pulled once from OSM via Overpass and bundled — see data/README note.
+const RESORT_SRC = { resort: { type: "geojson", data: "data/resort.geojson" } };
 const ILLUSTRATED_STYLE = {
   version: 8,
-  sources: OMT,
+  sources: { ...OMT, ...RESORT_SRC },
   layers: [
     { id: "bg", type: "background", paint: { "background-color": "#e7f0d9" } },
     { id: "landuse", type: "fill", source: "openmaptiles", "source-layer": "landuse",
@@ -96,6 +99,28 @@ const ILLUSTRATED_STYLE = {
       paint: { "line-color": "#d9cfba", "line-width": 1.5, "line-dasharray": [3, 2] } },
     { id: "building", type: "fill", source: "openmaptiles", "source-layer": "building",
       paint: { "fill-color": "#fcf9f1", "fill-outline-color": "#ddd2ba", "fill-opacity": 0.96 } },
+    /* --- bundled full-detail resort geometry, drawn over the tile base --- */
+    { id: "rs-plaza", type: "fill", source: "resort", filter: ["==", ["get", "k"], "plaza"],
+      paint: { "fill-color": "#f6efdd" } },
+    { id: "rs-water", type: "fill", source: "resort", filter: ["==", ["get", "k"], "water"],
+      paint: { "fill-color": "#8fcff0" } },
+    { id: "rs-path", type: "line", source: "resort", filter: ["==", ["get", "k"], "path"],
+      layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": "#f8f1de", "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 15, 1.4, 19, 9] } },
+    { id: "rs-track", type: "line", source: "resort", filter: ["==", ["get", "k"], "track"],
+      paint: { "line-color": "#e3d3b4", "line-width": 1.6 } },
+    { id: "rs-rail", type: "line", source: "resort", filter: ["==", ["get", "k"], "rail"],
+      paint: { "line-color": "#c2a683", "line-width": 1.6, "line-dasharray": [4, 3] } },
+    { id: "rs-monorail-casing", type: "line", source: "resort", filter: ["==", ["get", "k"], "monorail"],
+      layout: { "line-cap": "round" }, paint: { "line-color": "#ffffff", "line-width": 4 } },
+    { id: "rs-monorail", type: "line", source: "resort", filter: ["==", ["get", "k"], "monorail"],
+      layout: { "line-cap": "round" }, paint: { "line-color": "#e0a84f", "line-width": 2.2 } },
+    { id: "rs-building-3d", type: "fill-extrusion", source: "resort", filter: ["==", ["get", "k"], "building"],
+      paint: { "fill-extrusion-color": "#fcf8ee", "fill-extrusion-height": ["get", "h"],
+               "fill-extrusion-opacity": 0.94 } },
+    { id: "rs-attraction-3d", type: "fill-extrusion", source: "resort", filter: ["==", ["get", "k"], "attraction"],
+      paint: { "fill-extrusion-color": "#e9eff9", "fill-extrusion-height": ["get", "h"],
+               "fill-extrusion-opacity": 0.97 } },
   ],
   // OpenFreeMap asks for attribution to OpenStreetMap contributors
 };
