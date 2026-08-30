@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ParkPulse — Disneyland Live Map</title>
+<meta name="description" content="Unofficial live wait-time map for Disneyland Resort. Real attractions, real-time data.">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='%234292FF'/><circle cx='50' cy='50' r='16' fill='white'/></svg>">
+</head>
+<body>
+<div id="map" aria-label="Park map"></div>
+
+<!-- Top chrome -->
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-dot"></span>
+    <span class="brand-name">ParkPulse</span>
+  </div>
+  <div class="park-switch" role="tablist" aria-label="Park">
+    <button class="park-btn active" data-park="dl" role="tab" aria-selected="true">Disneyland</button>
+    <button class="park-btn" data-park="dca" role="tab" aria-selected="false">California Adventure</button>
+  </div>
+  <div class="hours-pill" id="hoursPill" hidden></div>
+</header>
+
+<!-- Search + filters -->
+<div class="controls">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" class="icon"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <input id="search" type="search" placeholder="Search attractions…" autocomplete="off" aria-label="Search">
+  </div>
+  <div class="chips" role="tablist" aria-label="Filter">
+    <button class="chip active" data-filter="ATTRACTION">Attractions</button>
+    <button class="chip" data-filter="SHOW">Shows</button>
+    <button class="chip" data-filter="RESTAURANT">Dining</button>
+    <button class="chip" data-filter="ALL">All</button>
+  </div>
+</div>
+
+<!-- Live refresh indicator -->
+<div class="live-pill" id="livePill" title="Live wait times refresh every 60 seconds">
+  <span class="live-dot"></span><span id="liveLabel">LIVE</span>
+</div>
+
+<!-- List toggle -->
+<button class="fab" id="listToggle" aria-label="Wait time list">
+  <svg viewBox="0 0 24 24" class="icon"><line x1="4" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="18" x2="14" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+</button>
+
+<!-- List drawer -->
+<aside class="drawer" id="drawer" aria-label="Wait times list" hidden>
+  <div class="drawer-head">
+    <h2 id="drawerTitle">Wait times</h2>
+    <button class="close-btn" id="drawerClose" aria-label="Close list">✕</button>
+  </div>
+  <ol class="wait-list" id="waitList"></ol>
+</aside>
+
+<!-- Detail bottom sheet -->
+<section class="sheet" id="sheet" hidden aria-live="polite">
+  <div class="sheet-grab"></div>
+  <div class="sheet-body" id="sheetBody"></div>
+</section>
+
+<!-- Error banner -->
+<div class="banner" id="banner" hidden></div>
+
+<footer class="credits">
+  Unofficial demo · Not affiliated with The Walt Disney Company · Live data <a href="https://themeparks.wiki" target="_blank" rel="noopener">themeparks.wiki</a> · Imagery Esri, Maxar, Earthstar Geographics
+</footer>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
