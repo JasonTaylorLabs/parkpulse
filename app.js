@@ -57,6 +57,13 @@ const state = {
 const $ = (s) => document.querySelector(s);
 const fmtPT = (d) => new Date(d).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/Los_Angeles" });
 
+/* Attraction photos + blurbs, curated at build time from Wikipedia/Wikimedia
+   Commons (freely licensed; hotlinked, credited, never redistributed here). */
+let MEDIA = {};
+fetch("data/media.json?v=5").then((r) => r.json()).then((m) => { MEDIA = m; }).catch(() => {});
+const mediaKey = (s) =>
+  s.toLowerCase().replace(/[’‘]/g, "'").replace(/["™]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+
 /* ---------------- map styles ----------------
    Default is an illustrated, in-park-app-style vector look built on
    OpenFreeMap's OpenMapTiles: soft greens, cream walkways, white
@@ -64,7 +71,7 @@ const fmtPT = (d) => new Date(d).toLocaleTimeString("en-US", { hour: "numeric", 
 const OMT = { openmaptiles: { type: "vector", url: "https://tiles.openfreemap.org/planet", attribution: "© OpenStreetMap contributors · OpenFreeMap" } };
 // Full-detail resort geometry (attraction footprints, plazas, monorail, rides)
 // pulled once from OSM via Overpass and bundled — see data/README note.
-const RESORT_SRC = { resort: { type: "geojson", data: "data/resort.geojson?v=4" } };
+const RESORT_SRC = { resort: { type: "geojson", data: "data/resort.geojson?v=5" } };
 const ILLUSTRATED_STYLE = {
   version: 8,
   sources: { ...OMT, ...RESORT_SRC },
@@ -385,7 +392,13 @@ function renderSheet(id) {
   if (showtimes) stats.push(stat("Next showtimes", `<small style="font-size:13px;font-weight:700">${showtimes}</small>`));
   stats.push(stat("Updated", `<small style="font-size:13px;font-weight:700">${state.lastUpdated ? fmtPT(state.lastUpdated) : "—"}</small>`));
 
+  const m = MEDIA[mediaKey(e.name)];
+  const hero = m ? `<img class="sheet-img" src="${m.img}" alt="${esc(e.name)}" decoding="async" onerror="this.remove()">` : "";
+  const about = m && m.ext ? `
+    <p class="sheet-about">${esc(m.ext)}</p>
+    <a class="sheet-credit" href="${m.url}" target="_blank" rel="noopener">Photo &amp; summary via Wikipedia · CC-licensed</a>` : "";
   $("#sheetBody").innerHTML = `
+    ${hero}
     <div class="sheet-top">
       <div>
         <div class="sheet-title">${esc(e.name)}</div>
@@ -393,7 +406,8 @@ function renderSheet(id) {
       </div>
       <button class="sheet-close" aria-label="Close">✕</button>
     </div>
-    <div class="sheet-stats">${stats.join("")}</div>`;
+    <div class="sheet-stats">${stats.join("")}</div>
+    ${about}`;
   $("#sheetBody .sheet-close").addEventListener("click", () => selectEntity(null));
 }
 const stat = (label, value) => `<div class="stat"><div class="s-label">${label}</div><div class="s-value">${value}</div></div>`;

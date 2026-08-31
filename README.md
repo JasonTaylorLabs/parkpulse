@@ -12,7 +12,7 @@ What this proves: I can ship a polished, data-dense live product experience — 
 - **Illustrated park-app cartography**: a custom-styled vector basemap (OpenFreeMap/OpenMapTiles over MapLibre GL) — soft greens, cream walkways, white buildings, friendly water — in the visual language of in-park map apps, with pseudo-3D attraction buildings and footprints (the castle, Space Mountain, the monorail loop), hand-placed land labels, zoom-aware attraction labels, and a one-tap **satellite mode** (Esri World Imagery)
 - **Resort-locked camera**: map bounds and zoom are clamped to the two parks — the map is the resort, not greater Anaheim
 - **120 real places** per park — attractions, entertainment, and dining — from the open themeparks.wiki API, each with exact coordinates
-- **Detail cards**: standby wait, operating status, Lightning Lane price & return window when offered, next showtimes, last-updated stamp — all in park time (PT)
+- **Detail cards**: a real photo and factual "about" blurb for 76 attractions (curated at build time from Wikipedia/Wikimedia Commons — freely licensed, hotlinked, credited), plus standby wait, operating status, Lightning Lane price & return window when offered, next showtimes, and a last-updated stamp — all in park time (PT)
 - **Wait-time list** sorted longest-first, search, and category filters, mirroring the in-park app's mental model
 - **Park switcher**: Disneyland ↔ California Adventure with a full data reload and fly-over
 - Today's real **park hours** in the header
