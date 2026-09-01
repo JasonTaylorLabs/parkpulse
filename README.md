@@ -27,7 +27,7 @@ Any static server works:
 python3 -m http.server 4173
 ```
 
-Then open http://localhost:4173. (Live data requires network; the API is CORS-open. Geolocation requires a secure context — `localhost` and HTTPS both qualify. Pushes to `main` deploy the site to GitHub Pages via `.github/workflows/deploy.yml`, so it runs on a phone at the Pages URL with full GPS.)
+Then open http://localhost:4173. (Live data requires network; the API is CORS-open. Geolocation requires a secure context — `localhost` and HTTPS both qualify. The site auto-deploys to GitHub Pages from `main`, so it runs on a phone at the Pages URL with full GPS.)
 
 ## Architecture notes
 
