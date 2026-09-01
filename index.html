@@ -4,12 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ParkPulse — Disneyland Live Map</title>
-<meta name="description" content="Unofficial live wait-time map for Disneyland Resort. Real attractions, real-time data.">
+<meta name="description" content="Unofficial live wait-time map for Disneyland Resort and Disneyland Paris. Real attractions, real-time data, GPS walking directions.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ParkPulse">
+<meta name="theme-color" content="#e7f0d9">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,500;6..12,600;6..12,700;6..12,800&display=swap">
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='%234292FF'/><circle cx='50' cy='50' r='16' fill='white'/></svg>">
 </head>
 <body>
@@ -24,6 +28,7 @@
   <div class="park-switch" role="tablist" aria-label="Park">
     <button class="park-btn active" data-park="dl" role="tab" aria-selected="true">Disneyland</button>
     <button class="park-btn" data-park="dca" role="tab" aria-selected="false">California Adventure</button>
+    <button class="park-btn" data-park="dlp" role="tab" aria-selected="false">Paris</button>
   </div>
   <div class="hours-pill" id="hoursPill" hidden></div>
 </header>
@@ -50,6 +55,11 @@
 <!-- Map style toggle -->
 <button class="style-toggle" id="styleToggle" aria-label="Toggle satellite view" title="Toggle satellite view">🛰</button>
 
+<!-- Locate me -->
+<button class="fab fab-locate" id="locateBtn" aria-label="Show my location" title="Show my location">
+  <svg viewBox="0 0 24 24" class="icon"><circle cx="12" cy="12" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2" fill="currentColor"/><line x1="12" y1="1.5" x2="12" y2="5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="19" x2="12" y2="22.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="1.5" y1="12" x2="5" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="19" y1="12" x2="22.5" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+</button>
+
 <!-- List toggle -->
 <button class="fab" id="listToggle" aria-label="Wait time list">
   <svg viewBox="0 0 24 24" class="icon"><line x1="4" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="18" x2="14" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -70,6 +80,29 @@
   <div class="sheet-body" id="sheetBody"></div>
 </section>
 
+<!-- Walking directions bar -->
+<section class="dirbar" id="dirbar" hidden aria-live="polite" aria-label="Walking directions">
+  <div class="dir-head">
+    <div class="dir-titles">
+      <div class="dir-label">Walking directions</div>
+      <div class="dir-name" id="dirName"></div>
+    </div>
+    <button class="close-btn" id="dirClose" aria-label="End directions">✕</button>
+  </div>
+  <div class="dir-waiting" id="dirWaiting"><span class="dir-spinner"></span> Waiting for your location — allow access when asked…</div>
+  <div class="dir-stats" id="dirStats" hidden>
+    <div class="dir-stat"><div class="d-value" id="dirDist">–</div><div class="d-label">distance</div></div>
+    <div class="dir-stat"><div class="d-value" id="dirWalk">–</div><div class="d-label">on foot</div></div>
+    <div class="dir-stat"><div class="d-value" id="dirHead">–</div><div class="d-label">heading</div></div>
+    <div class="dir-acc" id="dirAcc"></div>
+  </div>
+  <div class="dir-hint" id="dirHint" hidden></div>
+  <div class="dir-actions">
+    <button class="act-btn" id="demoBtn">🧪 Demo from park gate</button>
+    <a class="act-btn primary" id="appleLink" target="_blank" rel="noopener"> Apple Maps</a>
+  </div>
+</section>
+
 <!-- Error banner -->
 <div class="banner" id="banner" hidden></div>
 
@@ -78,6 +111,6 @@
 </footer>
 
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>

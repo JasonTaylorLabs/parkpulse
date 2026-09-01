@@ -236,6 +236,61 @@ body.sat-mode .pin-label { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.95),
 .stat .s-value small { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
 .status-chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; color: #fff; }
 
+/* ---------- sheet action buttons ---------- */
+.sheet-actions { display: flex; gap: 8px; margin-top: 12px; }
+.act-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+  border: 1px solid var(--stroke); background: var(--card-press); color: var(--ink);
+  font: inherit; font-size: 13.5px; font-weight: 800; padding: 11px 12px;
+  border-radius: 12px; cursor: pointer; text-decoration: none; white-space: nowrap;
+}
+.act-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.act-btn:active { opacity: 0.85; }
+.act-btn.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+/* ---------- GPS: locate button, user dot, directions bar ---------- */
+.fab-locate { bottom: calc(108px + var(--safe-b)); background: var(--card); color: var(--ink); }
+.fab-locate.watching { color: var(--accent); box-shadow: 0 0 0 3px rgba(29,127,214,0.25), var(--shadow-big); }
+
+.user-dot { position: relative; width: 22px; height: 22px; pointer-events: none; }
+.user-core {
+  position: absolute; inset: 3px; border-radius: 50%;
+  background: var(--accent); border: 2.5px solid #fff;
+  box-shadow: 0 1px 6px rgba(22,50,79,0.4);
+}
+.user-halo {
+  position: absolute; inset: -9px; border-radius: 50%;
+  background: rgba(29,127,214,0.22); animation: halo 2s ease-out infinite;
+}
+@keyframes halo { 0% { transform: scale(0.55); opacity: 1; } 100% { transform: scale(1.25); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .user-halo { animation: none; } }
+.user-dot.demo .user-core { background: var(--refurb); }
+.user-dot.demo .user-halo { background: rgba(123,92,214,0.22); }
+
+.dirbar {
+  position: fixed; z-index: 35; left: 50%; transform: translateX(-50%);
+  bottom: calc(34px + var(--safe-b)); width: min(430px, calc(100vw - 20px));
+  background: var(--card); border: 1px solid var(--stroke); border-radius: 22px;
+  box-shadow: var(--shadow-big); padding: 14px 16px; animation: rise 0.22s ease;
+}
+.dir-head { display: flex; align-items: flex-start; gap: 12px; }
+.dir-titles { flex: 1; min-width: 0; }
+.dir-label { font-size: 9.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-deep); }
+.dir-name { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.2; margin-top: 2px; }
+.dir-waiting { display: flex; align-items: center; gap: 9px; margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+.dir-spinner {
+  width: 14px; height: 14px; border-radius: 50%; flex: 0 0 auto;
+  border: 2.5px solid rgba(29,127,214,0.25); border-top-color: var(--accent);
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.dir-stats { display: flex; align-items: flex-end; gap: 16px; margin-top: 10px; }
+.dir-stat .d-value { font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.dir-stat .d-label { font-size: 9.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); margin-top: 1px; }
+.dir-acc { margin-left: auto; font-size: 10.5px; font-weight: 700; color: var(--ink-soft); align-self: center; }
+.dir-hint { margin-top: 10px; font-size: 12px; font-weight: 700; color: var(--warm); }
+.dir-actions { display: flex; gap: 8px; margin-top: 11px; }
+
 /* ---------- banner + credits ---------- */
 .banner {
   position: fixed; z-index: 50; top: calc(112px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%);
@@ -257,7 +312,9 @@ body.sat-mode .pin-label { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.95),
 
 @media (max-width: 560px) {
   .brand-name { display: none; }
-  .hours-pill { font-size: 11px; padding: 7px 10px; }
+  .hours-pill { display: none; } /* three park tabs need the room on phones */
+  .park-switch { overflow-x: auto; scrollbar-width: none; max-width: calc(100vw - 60px); }
+  .park-switch::-webkit-scrollbar { display: none; }
   .park-btn { font-size: 11.5px; padding: 6px 10px; }
   .search-wrap { max-width: none; }
   .style-toggle { top: calc(104px + env(safe-area-inset-top, 0px)); }
